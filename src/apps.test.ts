@@ -25,4 +25,8 @@ describe("visibleApps", () => {
   it("ignores unknown grant keys", () => {
     expect(visibleApps(APPS, ["product", "bogus"], "product").map((a) => a.key)).toEqual(["product"]);
   });
+
+  it("user with no grants still sees the current app", () => {
+    expect(visibleApps(APPS, [], "audit").map((a) => a.key)).toEqual(["audit"]);
+  });
 });

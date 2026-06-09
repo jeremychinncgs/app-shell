@@ -1,3 +1,4 @@
+"use client";
 import type { ReactNode } from "react";
 import { APPS, type ShellUser } from "./apps";
 import { AppLauncher } from "./AppLauncher";
@@ -20,7 +21,11 @@ export function Header({
   subtitle?: string;
   children?: ReactNode;
 }) {
-  const wordmark = APPS.find((a) => a.key === currentApp)?.name ?? "CGSI";
+  const entry = APPS.find((a) => a.key === currentApp);
+  if (!entry && (globalThis as { process?: { env?: { NODE_ENV?: string } } }).process?.env?.NODE_ENV === "development") {
+    console.warn(`[@cgsi/app-shell] currentApp "${currentApp}" not found in catalog`);
+  }
+  const wordmark = entry?.name ?? "CGSI";
   return (
     <header className="sticky top-0 z-50 bg-surface/85 backdrop-blur border-b-2 border-accent">
       <div className="w-full px-6 py-3 flex items-center gap-3">

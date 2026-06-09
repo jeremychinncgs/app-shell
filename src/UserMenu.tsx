@@ -4,6 +4,7 @@
 // .cgspectrum.com cookie (logged out of every app) then bounces back here.
 export function UserMenu({ email, authHostUrl }: { email: string; authHostUrl: string }) {
   function signOut() {
+    if (typeof window === "undefined") return;
     const callbackUrl = encodeURIComponent(window.location.href);
     window.location.href = `${authHostUrl}/signout?callbackUrl=${callbackUrl}`;
   }
