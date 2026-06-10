@@ -46,4 +46,14 @@ describe("visibleApps", () => {
     expect(adminEntryFor(["product", "admin"])?.key).toBe("admin");
     expect(adminEntryFor(["product", "admin"])?.url).toContain("/admin");
   });
+
+  it("marketing app is in the catalog ordered after people and before audit", () => {
+    const keys = APPS.map((a) => a.key);
+    expect(keys).toContain("marketing");
+    const iPeople = keys.indexOf("people");
+    const iMarketing = keys.indexOf("marketing");
+    const iAudit = keys.indexOf("audit");
+    expect(iPeople).toBeLessThan(iMarketing);
+    expect(iMarketing).toBeLessThan(iAudit);
+  });
 });
