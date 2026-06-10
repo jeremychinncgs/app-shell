@@ -46,7 +46,9 @@ export function SubNav({
 }) {
   return (
     <nav
-      className="w-full bg-surface border-b border-border"
+      // Pinned beneath the sticky Header (its content row is 56px + 2px accent
+      // border = 58px). If the Header's height ever changes, update this offset.
+      className="sticky top-[58px] z-40 w-full bg-surface border-b border-border"
       aria-label="Section navigation"
     >
       <div className="flex items-end gap-1 px-6">
