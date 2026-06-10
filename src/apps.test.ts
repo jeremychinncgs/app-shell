@@ -56,4 +56,14 @@ describe("visibleApps", () => {
     expect(iPeople).toBeLessThan(iMarketing);
     expect(iMarketing).toBeLessThan(iAudit);
   });
+
+  it("finance app is in the catalog ordered after marketing and before audit", () => {
+    const keys = APPS.map((a) => a.key);
+    expect(keys).toContain("finance");
+    const iMarketing = keys.indexOf("marketing");
+    const iFinance = keys.indexOf("finance");
+    const iAudit = keys.indexOf("audit");
+    expect(iMarketing).toBeLessThan(iFinance);
+    expect(iFinance).toBeLessThan(iAudit);
+  });
 });
