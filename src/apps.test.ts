@@ -66,4 +66,21 @@ describe("visibleApps", () => {
     expect(iMarketing).toBeLessThan(iFinance);
     expect(iFinance).toBeLessThan(iAudit);
   });
+
+  it("partnerships app is in the catalog after finance and before audit", () => {
+    const keys = APPS.map((a) => a.key);
+    expect(keys).toContain("partnerships");
+    const iFinance = keys.indexOf("finance");
+    const iPartnerships = keys.indexOf("partnerships");
+    const iAudit = keys.indexOf("audit");
+    expect(iFinance).toBeLessThan(iPartnerships);
+    expect(iPartnerships).toBeLessThan(iAudit);
+  });
+
+  it("scheduling entry has name Academic Ops and academicops URL (key unchanged)", () => {
+    const entry = APPS.find((a) => a.key === "scheduling");
+    expect(entry).toBeDefined();
+    expect(entry?.name).toBe("Academic Ops");
+    expect(entry?.url).toBe("https://academicops.cgspectrum.com");
+  });
 });
