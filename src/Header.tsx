@@ -1,6 +1,6 @@
 "use client";
 import type { ReactNode } from "react";
-import { APPS, type ShellUser } from "./apps";
+import { APPS, adminEntryFor, type ShellUser } from "./apps";
 import { AppLauncher } from "./AppLauncher";
 import { UserMenu } from "./UserMenu";
 
@@ -26,6 +26,9 @@ export function Header({
     console.warn(`[@cgsi/app-shell] currentApp "${currentApp}" not found in catalog`);
   }
   const wordmark = entry?.name ?? "CGSI";
+  // Far-right Admin shortcut for admin-grant holders — reach the grants/roles
+  // page from any app without opening the launcher.
+  const admin = adminEntryFor(user.apps);
   return (
     <header className="sticky top-0 z-50 bg-surface/85 backdrop-blur border-b-2 border-accent">
       <div className="w-full px-6 py-3 flex items-center gap-3">
@@ -37,6 +40,14 @@ export function Header({
         {subtitle && <span className="text-text-3 text-xs">{subtitle}</span>}
         <div className="ml-auto flex items-center gap-3">
           {children}
+          {admin && (
+            <a
+              href={admin.url}
+              className="rounded border border-border px-2 py-1 text-xs text-text-2 hover:border-accent hover:text-accent transition-colors"
+            >
+              Admin
+            </a>
+          )}
           <UserMenu email={user.email} authHostUrl={authHostUrl} />
         </div>
       </div>

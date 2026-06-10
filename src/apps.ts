@@ -14,7 +14,8 @@ export type ShellUser = {
 // Canonical CGSI app catalog. `key` matches the grant keys the auth host embeds
 // in the session token. Adding an app here (+ a grant-matrix row in the auth
 // host) is the only change needed to surface a new app in every launcher.
-// (Future: courseapp/"Product" splits into HR + Partnerships — purely additive.)
+// Department split in progress (dept-split spec 2026-06-10): People shipped;
+// Finance/Marketing/Partnerships/AcademicOps land as their phases ship.
 export const APPS: AppEntry[] = [
   { key: "product", name: "Product", url: "https://catalog.cgspectrum.com", description: "Course catalogue, org & policy" },
   { key: "people", name: "People", url: "https://people.cgspectrum.com", description: "Org chart & mentor directory" },
@@ -30,4 +31,11 @@ export const APPS: AppEntry[] = [
 export function visibleApps(catalog: AppEntry[], userApps: string[], currentApp: string): AppEntry[] {
   const allowed = new Set(userApps);
   return catalog.filter((a) => allowed.has(a.key) || a.key === currentApp);
+}
+
+// The admin-page entry for admin-grant holders, else null. Drives the header's
+// far-right Admin shortcut so admins reach the grants/roles page from any app.
+export function adminEntryFor(userApps: string[]): AppEntry | null {
+  if (!userApps.includes("admin")) return null;
+  return APPS.find((a) => a.key === "admin") ?? null;
 }

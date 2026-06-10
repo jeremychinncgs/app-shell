@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { APPS, visibleApps } from "./apps";
+import { APPS, visibleApps, adminEntryFor } from "./apps";
 
 describe("visibleApps", () => {
   it("staff (product only) sees just Product", () => {
@@ -39,5 +39,11 @@ describe("visibleApps", () => {
     const keys = APPS.map((a) => a.key);
     expect(keys).toContain("people");
     expect(keys.indexOf("people")).toBeLessThan(keys.indexOf("audit"));
+  });
+
+  it("adminEntryFor returns the admin entry only for admin-grant holders", () => {
+    expect(adminEntryFor(["product", "people"])).toBeNull();
+    expect(adminEntryFor(["product", "admin"])?.key).toBe("admin");
+    expect(adminEntryFor(["product", "admin"])?.url).toContain("/admin");
   });
 });
