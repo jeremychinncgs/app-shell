@@ -21,6 +21,7 @@ export const APPS: AppEntry[] = [
   { key: "scheduling", name: "Scheduling", url: "https://scheduling.cgspectrum.com", description: "Class viability & teaching cost" },
   { key: "sales", name: "Sales", url: "https://sales.cgspectrum.com", description: "Funnel & cohort operations" },
   { key: "cms", name: "Media", url: "https://cms.cgspectrum.com", description: "Media library (in development)" },
+  { key: "admin", name: "Admin", url: "https://auth.cgspectrum.com/admin", description: "Manage app access" },
 ];
 
 // Apps the user may open: those granted, plus the current app (you're in it).

@@ -29,4 +29,9 @@ describe("visibleApps", () => {
   it("user with no grants still sees the current app", () => {
     expect(visibleApps(APPS, [], "audit").map((a) => a.key)).toEqual(["audit"]);
   });
+
+  it("shows the admin entry only when granted", () => {
+    expect(visibleApps(APPS, ["product"], "product").map((a) => a.key)).not.toContain("admin");
+    expect(visibleApps(APPS, ["product", "admin"], "product").map((a) => a.key)).toContain("admin");
+  });
 });
