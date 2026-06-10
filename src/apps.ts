@@ -17,6 +17,7 @@ export type ShellUser = {
 // (Future: courseapp/"Product" splits into HR + Partnerships — purely additive.)
 export const APPS: AppEntry[] = [
   { key: "product", name: "Product", url: "https://catalog.cgspectrum.com", description: "Course catalogue, org & policy" },
+  { key: "people", name: "People", url: "https://people.cgspectrum.com", description: "Org chart & mentor directory" },
   { key: "audit", name: "Course Audits", url: "https://audit.cgspectrum.com", description: "Cypher audit remediation" },
   { key: "scheduling", name: "Scheduling", url: "https://scheduling.cgspectrum.com", description: "Class viability & teaching cost" },
   { key: "sales", name: "Sales", url: "https://sales.cgspectrum.com", description: "Funnel & cohort operations" },

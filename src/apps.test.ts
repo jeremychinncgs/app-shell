@@ -34,4 +34,10 @@ describe("visibleApps", () => {
     expect(visibleApps(APPS, ["product"], "product").map((a) => a.key)).not.toContain("admin");
     expect(visibleApps(APPS, ["product", "admin"], "product").map((a) => a.key)).toContain("admin");
   });
+
+  it("people app is in the catalog before audit", () => {
+    const keys = APPS.map((a) => a.key);
+    expect(keys).toContain("people");
+    expect(keys.indexOf("people")).toBeLessThan(keys.indexOf("audit"));
+  });
 });
