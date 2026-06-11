@@ -1,6 +1,7 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { visibleApps, type AppEntry } from "./apps";
+import { pickAppsToWarm } from "./warm";
 
 export function AppLauncher({
   catalog,
@@ -12,10 +13,20 @@ export function AppLauncher({
   currentApp: string;
 }) {
   const [open, setOpen] = useState(false);
+  const lastWarm = useRef<Record<string, number>>({});
   const apps = useMemo(
     () => visibleApps(catalog, userApps, currentApp),
     [catalog, userApps, currentApp],
   );
+
+  // Opening the launcher = intent to switch: pre-fetch the other apps so the
+  // click lands on a warm instance (same-site credentialed fetch warms the
+  // authenticated render; throttled per app in pickAppsToWarm).
+  const warm = () => {
+    for (const a of pickAppsToWarm(apps, currentApp, lastWarm.current, Date.now())) {
+      fetch(a.url, { mode: "no-cors", credentials: "include", cache: "no-store" }).catch(() => {});
+    }
+  };
 
   return (
     <div className="relative">
@@ -24,7 +35,10 @@ export function AppLauncher({
         aria-label="Switch app"
         aria-expanded={open}
         aria-haspopup="menu"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          if (!open) warm();
+          setOpen((o) => !o);
+        }}
         className="flex items-center rounded px-2 py-1 text-text-3 hover:text-accent transition-colors"
       >
         <span className="grid grid-cols-3 gap-0.5">
