@@ -20,12 +20,12 @@ export const APPS: AppEntry[] = [
   { key: "product", name: "Product", url: "https://catalog.cgspectrum.com", description: "Course catalogue, org & policy" },
   { key: "people", name: "People", url: "https://people.cgspectrum.com", description: "Org chart & mentor directory" },
   { key: "marketing", name: "Marketing", url: "https://marketing.cgspectrum.com", description: "Testimonials & brand" },
+  { key: "sales", name: "Sales", url: "https://sales.cgspectrum.com", description: "Funnel & cohort operations" },
+  { key: "scheduling", name: "Academic Ops", url: "https://academicops.cgspectrum.com", description: "Scheduling, accreditation & policy" },
   { key: "finance", name: "Finance", url: "https://finance.cgspectrum.com", description: "Cohort & financial dashboards" },
   { key: "partnerships", name: "Partnerships", url: "https://partnerships.cgspectrum.com", description: "Partner programs & industry" },
-  { key: "audit", name: "Course Audits", url: "https://audit.cgspectrum.com", description: "Cypher audit remediation" },
-  { key: "scheduling", name: "Academic Ops", url: "https://academicops.cgspectrum.com", description: "Scheduling, accreditation & policy" },
-  { key: "sales", name: "Sales", url: "https://sales.cgspectrum.com", description: "Funnel & cohort operations" },
   { key: "cms", name: "Media", url: "https://cms.cgspectrum.com", description: "Media library (in development)" },
+  { key: "audit", name: "Course Audits", url: "https://audit.cgspectrum.com", description: "Cypher audit remediation" },
   { key: "admin", name: "Admin", url: "https://auth.cgspectrum.com/admin", description: "Manage app access" },
 ];
 
