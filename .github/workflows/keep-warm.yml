@@ -1,0 +1,19 @@
+# Estate keep-warm: hits the auth host's /api/warm, which fans out a GET to
+# every app subdomain so serverless instances stay hot (cold TTFB measured
+# 1.2-3.7s vs 0.2-0.45s warm). Lives in this PUBLIC repo for unlimited Actions
+# minutes; Vercel cron was rejected on the Hobby plan (sub-daily = Pro).
+# GitHub cron drifts (5-15 min real cadence) — good enough for warming.
+name: keep-warm
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  warm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Warm the estate
+        run: |
+          curl -sS --max-time 60 https://auth.cgspectrum.com/api/warm
