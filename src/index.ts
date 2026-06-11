@@ -8,3 +8,6 @@ export type { AppEntry, ShellUser } from "./apps";
 export { SearchBar } from "./SearchBar";
 export { visibleResults, groupByApp } from "./searchbar-logic";
 export type { SearchResult, SearchResultApp } from "./searchbar-logic";
+export { ThemeToggle } from "./ThemeToggle";
+export { THEME_INIT_SCRIPT, THEME_COOKIE, resolveTheme, applyTheme } from "./theme";
+export type { Theme } from "./theme";

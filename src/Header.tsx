@@ -4,6 +4,7 @@ import { APPS, adminEntryFor, type ShellUser } from "./apps";
 import { AppLauncher } from "./AppLauncher";
 import { UserMenu } from "./UserMenu";
 import { SearchBar } from "./SearchBar";
+import { ThemeToggle } from "./ThemeToggle";
 
 // Canonical CGSI app header. Presentational: identity facts arrive as props the
 // consuming app extracts from its own auth() session. Shared via @cgsi/app-shell
@@ -41,6 +42,7 @@ export function Header({
         {subtitle && <span className="text-text-3 text-xs">{subtitle}</span>}
         <div className="ml-auto flex items-center gap-3">
           <SearchBar userApps={user.apps} />
+          <ThemeToggle />
           {children}
           {admin && (
             <a
