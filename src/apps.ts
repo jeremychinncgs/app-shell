@@ -25,7 +25,7 @@ export const APPS: AppEntry[] = [
   { key: "finance", name: "Finance", url: "https://finance.cgspectrum.com", description: "Cohort & financial dashboards" },
   { key: "partnerships", name: "Partnerships", url: "https://partnerships.cgspectrum.com", description: "Partner programs & industry" },
   { key: "cms", name: "Media", url: "https://cms.cgspectrum.com", description: "Media library (in development)" },
-  { key: "audit", name: "Course Audits", url: "https://audit.cgspectrum.com", description: "Cypher audit remediation" },
+  { key: "audit", name: "Audits", url: "https://audit.cgspectrum.com", description: "Cypher audit remediation" },
   { key: "admin", name: "Admin", url: "https://auth.cgspectrum.com/admin", description: "Manage app access" },
 ];
 
