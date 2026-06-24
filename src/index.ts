@@ -14,3 +14,4 @@ export type { SearchResult, SearchResultApp } from "./searchbar-logic";
 export { ThemeToggle } from "./ThemeToggle";
 export { THEME_INIT_SCRIPT, THEME_COOKIE, resolveTheme, applyTheme } from "./theme";
 export type { Theme } from "./theme";
+export { LAST_TAB_COOKIE, parseLastTabCookie, resolveLastTab, lastTabCookieString, rememberTab } from "./last-tab";
