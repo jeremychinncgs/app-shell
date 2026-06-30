@@ -18,6 +18,14 @@ export interface UrlStateCodec<T> {
   isBare?: (params: ReadonlyURLSearchParams) => boolean;
   /** localStorage key enabling the "open where you left off" restore + write-through. Omit to disable. */
   storageKey?: string;
+  /** Write the URL via the native History API (history.replaceState/pushState)
+   *  instead of router.replace/push. The URL still updates (shareable) and
+   *  useSearchParams stays in sync (Next 14.1+), but the change does NOT trigger a
+   *  navigation / server-component re-render. Use for `force-dynamic` pages that
+   *  ship a large dataset once and filter CLIENT-side, where a router write would
+   *  needlessly re-stream the whole RSC payload on every change. Leave false
+   *  (default) for ordinary pages where a navigation re-render is cheap. */
+  shallow?: boolean;
 }
 
 export interface UrlState<T> {
@@ -36,9 +44,17 @@ export function useUrlState<T>(codec: UrlStateCodec<T>): UrlState<T> {
 
   const setState = (next: T, history: "replace" | "push" = "replace"): void => {
     const params = codec.serialize(next);
-    // Use router[history]() — do NOT destructure replace/push into bare variables
-    // or the router binding is lost.
-    router[history](buildUrl(pathname, params), { scroll: false });
+    const url = buildUrl(pathname, params);
+    if (codec.shallow) {
+      // History API: update the URL without a navigation / server re-render.
+      // useSearchParams stays in sync (Next 14.1+), so state still flows.
+      if (history === "push") window.history.pushState(null, "", url);
+      else window.history.replaceState(null, "", url);
+    } else {
+      // Use router[history]() — do NOT destructure replace/push into bare variables
+      // or the router binding is lost.
+      router[history](url, { scroll: false });
+    }
     if (codec.storageKey) {
       try {
         localStorage.setItem(codec.storageKey, params.toString());
@@ -60,7 +76,9 @@ export function useUrlState<T>(codec: UrlStateCodec<T>): UrlState<T> {
     try {
       const saved = localStorage.getItem(codec.storageKey);
       if (saved) {
-        router.replace(`${pathname}?${saved}`, { scroll: false });
+        const url = `${pathname}?${saved}`;
+        if (codec.shallow) window.history.replaceState(null, "", url);
+        else router.replace(url, { scroll: false });
       }
     } catch {
       // Ignore quota / security errors
