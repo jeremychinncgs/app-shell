@@ -21,6 +21,7 @@ export const APPS: AppEntry[] = [
   { key: "people", name: "People", url: "https://people.cgspectrum.com", description: "Org chart & mentor directory" },
   { key: "marketing", name: "Marketing", url: "https://marketing.cgspectrum.com", description: "Testimonials & brand" },
   { key: "sales", name: "Sales", url: "https://sales.cgspectrum.com", description: "Funnel & cohort operations" },
+  { key: "leadership", name: "Leadership", url: "https://leadership.cgspectrum.com", description: "Conversion rally dashboard: lead→enrolment, CAC, referrals" },
   { key: "scheduling", name: "Academic Ops", url: "https://academicops.cgspectrum.com", description: "Scheduling, accreditation & policy" },
   { key: "finance", name: "Finance", url: "https://finance.cgspectrum.com", description: "Cohort & financial dashboards" },
   { key: "partnerships", name: "Partnerships", url: "https://partnerships.cgspectrum.com", description: "Partner programs & industry" },
