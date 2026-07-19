@@ -37,7 +37,7 @@ describe("visibleApps", () => {
 
   it("APPS canonical order", () => {
     expect(APPS.map((a) => a.key)).toEqual([
-      "product", "people", "marketing", "sales", "leadership", "scheduling", "finance", "partnerships", "cms", "audit", "governance", "admin",
+      "leadership", "product", "people", "marketing", "sales", "scheduling", "finance", "partnerships", "cms", "audit", "governance", "admin",
     ]);
   });
 
