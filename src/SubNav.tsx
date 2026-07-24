@@ -1,11 +1,19 @@
 "use client";
 
+import { rememberTab } from "./last-tab";
+
 /**
  * SubNav — shared left-justified section tab row.
  *
  * Sits flush under the Header's bottom border. Consumers supply tabs and
  * currentPath (from their own usePathname() or router). No next/link dep —
  * renders plain <a> elements so the component stays framework-agnostic.
+ *
+ * Last-tab memory: pass `rememberSection` (the app's estate key, e.g.
+ * "salesapp") and every tab click is written to the estate last-tab cookie
+ * via rememberTab(). The app's root page resolves it with resolveLastTab()
+ * to land returning users on the section they were last in. Omit the prop
+ * and SubNav behaves exactly as before.
  *
  * Active state: accent underline + accent text.
  * Inactive state: muted text, hover → primary text.
@@ -40,9 +48,13 @@ export function isActiveTab(href: string, currentPath: string): boolean {
 export function SubNav({
   tabs,
   currentPath,
+  rememberSection,
 }: {
   tabs: SubNavTab[];
   currentPath: string;
+  /** Estate last-tab key (usually the app key). When set, tab clicks are
+   *  remembered in the cgsi-last-tab cookie for the app root to resolve. */
+  rememberSection?: string;
 }) {
   return (
     <nav
@@ -58,6 +70,7 @@ export function SubNav({
             <a
               key={tab.href}
               href={tab.href}
+              onClick={rememberSection ? () => rememberTab(rememberSection, tab.href) : undefined}
               aria-current={active ? "page" : undefined}
               className={[
                 "inline-block px-3 py-2.5 text-sm font-semibold transition-colors duration-100",
