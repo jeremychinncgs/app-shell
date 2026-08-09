@@ -91,7 +91,7 @@ export function initialsFor(name: string | null | undefined, email: string): str
  * sits on the one control every viewer already looks at (the avatar), so its
  * accessible name is the only place a screen reader user would think to
  * check for it. A bare coloured dot with no text counterpart here would be
- * invisible to assistive tech and to anyone who cannot distinguish colour —
+ * invisible to assistive tech and to anyone who cannot distinguish colour,
  * exactly the discoverability gap that replacing the theme icon with text
  * was fixing elsewhere in this component.
  */
