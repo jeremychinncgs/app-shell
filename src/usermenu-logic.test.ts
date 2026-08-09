@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { signOutUrl, themeToggleLabel } from "./usermenu-logic";
+import { signOutUrl, themeToggleAriaLabel, themeToggleLabel } from "./usermenu-logic";
 
 describe("signOutUrl", () => {
   test("builds the auth-host signout URL with an encoded callback", () => {
@@ -15,13 +15,25 @@ describe("signOutUrl", () => {
 });
 
 describe("themeToggleLabel", () => {
-  test("dark theme offers to switch to light", () => {
-    expect(themeToggleLabel("dark")).toBe("Switch to light mode");
+  test("dark theme names the destination: Light mode", () => {
+    expect(themeToggleLabel("dark")).toBe("Light mode");
   });
-  test("light theme offers to switch to dark", () => {
-    expect(themeToggleLabel("light")).toBe("Switch to dark mode");
+  test("light theme names the destination: Dark mode", () => {
+    expect(themeToggleLabel("light")).toBe("Dark mode");
   });
   test("unresolved (pre-mount) theme renders no label yet", () => {
     expect(themeToggleLabel(null)).toBe("");
+  });
+});
+
+describe("themeToggleAriaLabel", () => {
+  test("dark theme: full phrasing, switch to light", () => {
+    expect(themeToggleAriaLabel("dark")).toBe("Switch to light mode");
+  });
+  test("light theme: full phrasing, switch to dark", () => {
+    expect(themeToggleAriaLabel("light")).toBe("Switch to dark mode");
+  });
+  test("unresolved (pre-mount) theme has no aria-label yet", () => {
+    expect(themeToggleAriaLabel(null)).toBe("");
   });
 });

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { applyTheme, type Theme } from "./theme";
-import { signOutUrl, themeToggleLabel, type ProfileLink } from "./usermenu-logic";
+import { signOutUrl, themeToggleAriaLabel, themeToggleLabel, type ProfileLink } from "./usermenu-logic";
 
 export type { ProfileLink };
 
@@ -126,7 +126,13 @@ export function UserMenu({
             </a>
           ))}
 
-          <button type="button" role="menuitem" onClick={toggleTheme} className={itemClass}>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={toggleTheme}
+            aria-label={themeToggleAriaLabel(theme)}
+            className={itemClass}
+          >
             {themeToggleLabel(theme)}
           </button>
 
