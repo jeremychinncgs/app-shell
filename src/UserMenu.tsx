@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { applyTheme, type Theme } from "./theme";
 import {
+  anyLinkIncomplete,
   avatarAriaLabel,
   initialsFor,
   signOutUrl,
@@ -27,8 +28,20 @@ export type { ProfileLink };
  *     someone is signed in as the wrong account.
  *  2. `profileLinks`, in the order given (nothing rendered when absent/empty).
  *     A future "Dashboard" entry slots in above these without restructuring.
+ *     A link with `incomplete: true` gets a small attention-coloured dot
+ *     beside its label, plus visually-hidden text so the dot has a text
+ *     alternative for screen readers.
  *  3. Theme toggle, as a text item labelled with the ACTION it performs.
  *  4. Sign out.
+ *
+ * When ANY supplied link is incomplete, the avatar trigger ALSO carries a
+ * small dot at its top-right corner (see `anyLinkIncomplete` in
+ * usermenu-logic.ts), folded into the trigger's own aria-label rather than
+ * left as colour alone. This is the indicator that actually matters: without
+ * something on the trigger itself, nobody has a reason to open the menu and
+ * discover that Profile or Availability needs attention, which is the same
+ * discoverability gap that made this component replace the theme icon and
+ * the visible email with text in the first place.
  *
  * 🔴 The shell stays dumb about which links a viewer should see. It renders
  * exactly what it's handed and never invents a link itself. This is
@@ -57,6 +70,11 @@ export function UserMenu({
   const containerRef = useRef<HTMLDivElement>(null);
   const initials = initialsFor(name, email);
   const showImage = !!image && !imageFailed;
+  // Drives BOTH indicators: the avatar's corner dot, and the aria-label that
+  // gives it a text alternative. See usermenu-logic.ts for why an absent
+  // `incomplete` field on every link (the 13-app case) reads as false here,
+  // never as "unknown, assume incomplete".
+  const hasIncomplete = anyLinkIncomplete(profileLinks);
 
   // Google's avatar URLs rotate and expire on session/token refresh: a
   // failed URL must not sour later, valid ones for the rest of this mount.
@@ -115,45 +133,62 @@ export function UserMenu({
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label={avatarAriaLabel(name, email)}
+        aria-label={avatarAriaLabel(name, email, hasIncomplete)}
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-1.5 rounded border border-border px-1.5 py-1 text-xs text-text-2 hover:border-accent hover:text-accent transition-colors"
       >
-        {showImage ? (
-          // 🔴 Plain <img>, deliberately not next/image: the photo lives on
-          // lh3.googleusercontent.com, and next/image requires a
-          // remotePatterns entry in EVERY consuming app's next.config before
-          // it will render an external host. A plain <img> needs no config
-          // anywhere. Do not "upgrade" this to next/image; it would break
-          // the other 13 apps on this shell version until each one edited
-          // its own config. referrerPolicy="no-referrer" because Google's
-          // CDN can reject a request carrying a referrer from an
-          // unexpected origin, and this menu renders on 14 different
-          // hostnames.
-          <img
-            src={image!}
-            alt=""
-            width={28}
-            height={28}
-            referrerPolicy="no-referrer"
-            onError={() => setImageFailed(true)}
-            // Arbitrary-pixel size classes, not h-7/w-7: this component
-            // renders inside whichever app's DOM hosts the shell, and
-            // Tailwind's rem-based scale resolves against THAT app's root
-            // font-size, not a fixed 16px. people sets a 14px root font, so
-            // h-7 (1.75rem) would render at 24.5px there, not the intended
-            // 28px. Arbitrary-value classes compile to literal pixels and
-            // stay correct regardless of the host's root size.
-            className="h-[28px] w-[28px] shrink-0 rounded-full object-cover"
-          />
-        ) : (
-          <span
-            aria-hidden
-            className="flex h-[28px] w-[28px] shrink-0 items-center justify-center rounded-full bg-accent/15 text-[11px] font-semibold text-accent"
-          >
-            {initials}
-          </span>
-        )}
+        {/* relative wrapper exists only to anchor the incomplete dot to
+            THIS element's corner, not the whole button (which also
+            contains the chevron). */}
+        <span className="relative inline-flex shrink-0">
+          {showImage ? (
+            // 🔴 Plain <img>, deliberately not next/image: the photo lives on
+            // lh3.googleusercontent.com, and next/image requires a
+            // remotePatterns entry in EVERY consuming app's next.config before
+            // it will render an external host. A plain <img> needs no config
+            // anywhere. Do not "upgrade" this to next/image; it would break
+            // the other 13 apps on this shell version until each one edited
+            // its own config. referrerPolicy="no-referrer" because Google's
+            // CDN can reject a request carrying a referrer from an
+            // unexpected origin, and this menu renders on 14 different
+            // hostnames.
+            <img
+              src={image!}
+              alt=""
+              width={28}
+              height={28}
+              referrerPolicy="no-referrer"
+              onError={() => setImageFailed(true)}
+              // Arbitrary-pixel size classes, not h-7/w-7: this component
+              // renders inside whichever app's DOM hosts the shell, and
+              // Tailwind's rem-based scale resolves against THAT app's root
+              // font-size, not a fixed 16px. people sets a 14px root font, so
+              // h-7 (1.75rem) would render at 24.5px there, not the intended
+              // 28px. Arbitrary-value classes compile to literal pixels and
+              // stay correct regardless of the host's root size.
+              className="h-[28px] w-[28px] shrink-0 rounded-full object-cover"
+            />
+          ) : (
+            <span
+              aria-hidden
+              className="flex h-[28px] w-[28px] shrink-0 items-center justify-center rounded-full bg-accent/15 text-[11px] font-semibold text-accent"
+            >
+              {initials}
+            </span>
+          )}
+          {hasIncomplete && (
+            // Explicit pixel classes throughout, not rem-derived Tailwind
+            // sizes (h-1.5/w-1.5 etc): the same host-root-font bug already
+            // caught on the avatar image above (people's 14px root would
+            // shrink a rem-based dot to 87.5% of the intended size). The
+            // text alternative lives on the button's aria-label above, not
+            // here: this dot is aria-hidden and decorative only.
+            <span
+              aria-hidden
+              className="absolute -top-[1px] -right-[1px] h-[6px] w-[6px] rounded-full bg-[var(--color-attention)]"
+            />
+          )}
+        </span>
         <svg
           width="10"
           height="10"
@@ -193,7 +228,20 @@ export function UserMenu({
               onClick={() => setOpen(false)}
               className={itemClass}
             >
-              {link.label}
+              <span className="inline-flex items-center gap-1.5">
+                {link.label}
+                {link.incomplete && (
+                  // Same attention-coloured, explicit-pixel dot as the avatar
+                  // trigger. aria-hidden because the sr-only text right
+                  // after it is this dot's text alternative, not a repeat of
+                  // the label.
+                  <span
+                    aria-hidden
+                    className="inline-block h-[6px] w-[6px] shrink-0 rounded-full bg-[var(--color-attention)]"
+                  />
+                )}
+              </span>
+              {link.incomplete && <span className="sr-only"> incomplete</span>}
             </a>
           ))}
 

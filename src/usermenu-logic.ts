@@ -3,10 +3,19 @@
 
 import type { Theme } from "./theme";
 
-/** A single profile-menu entry a consuming app hands the shell to render. */
+/**
+ * A single profile-menu entry a consuming app hands the shell to render.
+ *
+ * `incomplete` is optional and defaults to falsy everywhere it's read: 13 of
+ * the 14 consuming apps build their `profileLinks` array against an older
+ * shell version and pass no such field at all, and none of them may break by
+ * upgrading past this one. Only a link that explicitly sets it `true` gets
+ * the incomplete dot; absence and `false` render identically (no dot).
+ */
 export interface ProfileLink {
   label: string;
   href: string;
+  incomplete?: boolean;
 }
 
 /**
@@ -76,11 +85,43 @@ export function initialsFor(name: string | null | undefined, email: string): str
  * that used to be visible on the button itself. Names the person when
  * possible; falls back to the email so the button always has an accessible
  * name, and finally to a generic label if somehow neither is available.
+ *
+ * `hasIncomplete` folds the corner dot's meaning into this same label rather
+ * than relying on a second, separately-discoverable piece of text: the dot
+ * sits on the one control every viewer already looks at (the avatar), so its
+ * accessible name is the only place a screen reader user would think to
+ * check for it. A bare coloured dot with no text counterpart here would be
+ * invisible to assistive tech and to anyone who cannot distinguish colour —
+ * exactly the discoverability gap that replacing the theme icon with text
+ * was fixing elsewhere in this component.
  */
-export function avatarAriaLabel(name: string | null | undefined, email: string): string {
+export function avatarAriaLabel(
+  name: string | null | undefined,
+  email: string,
+  hasIncomplete = false,
+): string {
   const trimmedName = (name ?? "").trim();
-  if (trimmedName.length > 0) return `User menu for ${trimmedName}`;
-  const trimmedEmail = (email ?? "").trim();
-  if (trimmedEmail.length > 0) return `User menu for ${trimmedEmail}`;
-  return "User menu";
+  const base =
+    trimmedName.length > 0
+      ? `User menu for ${trimmedName}`
+      : (email ?? "").trim().length > 0
+        ? `User menu for ${(email ?? "").trim()}`
+        : "User menu";
+  return hasIncomplete ? `${base}, profile incomplete` : base;
+}
+
+/**
+ * Whether ANY supplied profile link still needs attention. Drives the
+ * avatar-trigger corner dot: without a trigger-level marker, a viewer would
+ * have no reason to ever open the menu and discover that Profile or
+ * Availability needs filling in, the same discoverability gap the trigger's
+ * accessible name already exists to close.
+ *
+ * Pure and pessimism-free: an absent `incomplete` field (the 13-app case, and
+ * every link built before this shell version) reads as "not incomplete",
+ * never as "unknown, assume incomplete". A consuming app that has not yet
+ * opted in gets no dot, not a false one.
+ */
+export function anyLinkIncomplete(links: readonly ProfileLink[]): boolean {
+  return links.some((link) => link.incomplete === true);
 }

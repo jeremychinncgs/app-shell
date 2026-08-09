@@ -1,10 +1,12 @@
 import { describe, expect, test } from "vitest";
 import {
+  anyLinkIncomplete,
   avatarAriaLabel,
   initialsFor,
   signOutUrl,
   themeToggleAriaLabel,
   themeToggleLabel,
+  type ProfileLink,
 } from "./usermenu-logic";
 
 describe("signOutUrl", () => {
@@ -101,5 +103,69 @@ describe("avatarAriaLabel", () => {
   });
   test("falls back to a generic label when neither is available", () => {
     expect(avatarAriaLabel(null, "")).toBe("User menu");
+  });
+  test("hasIncomplete defaults to false: unchanged label", () => {
+    expect(avatarAriaLabel("Jeremy Chinn", "jeremychinn@cgspectrum.com")).toBe(
+      "User menu for Jeremy Chinn",
+    );
+  });
+  test("hasIncomplete true appends the incomplete state to the name case", () => {
+    expect(avatarAriaLabel("Jeremy Chinn", "jeremychinn@cgspectrum.com", true)).toBe(
+      "User menu for Jeremy Chinn, profile incomplete",
+    );
+  });
+  test("hasIncomplete true appends the incomplete state to the email fallback", () => {
+    expect(avatarAriaLabel(undefined, "jeremychinn@cgspectrum.com", true)).toBe(
+      "User menu for jeremychinn@cgspectrum.com, profile incomplete",
+    );
+  });
+  test("hasIncomplete true appends the incomplete state to the generic fallback", () => {
+    expect(avatarAriaLabel(null, "", true)).toBe("User menu, profile incomplete");
+  });
+  test("hasIncomplete false is identical to omitting the argument", () => {
+    expect(avatarAriaLabel("Jeremy Chinn", "jeremychinn@cgspectrum.com", false)).toBe(
+      avatarAriaLabel("Jeremy Chinn", "jeremychinn@cgspectrum.com"),
+    );
+  });
+});
+
+describe("anyLinkIncomplete", () => {
+  test("no links at all: false", () => {
+    expect(anyLinkIncomplete([])).toBe(false);
+  });
+  test("links with no incomplete field at all (the 13-app case): false", () => {
+    const links: ProfileLink[] = [
+      { label: "Profile", href: "https://people.cgspectrum.com/me" },
+      { label: "Availability", href: "https://people.cgspectrum.com/me/availability" },
+    ];
+    expect(anyLinkIncomplete(links)).toBe(false);
+  });
+  test("links explicitly marked incomplete: false, not incomplete: false", () => {
+    const links: ProfileLink[] = [
+      { label: "Profile", href: "/me", incomplete: false },
+      { label: "Availability", href: "/me/availability", incomplete: false },
+    ];
+    expect(anyLinkIncomplete(links)).toBe(false);
+  });
+  test("some links incomplete: true", () => {
+    const links: ProfileLink[] = [
+      { label: "Profile", href: "/me", incomplete: true },
+      { label: "Availability", href: "/me/availability", incomplete: false },
+    ];
+    expect(anyLinkIncomplete(links)).toBe(true);
+  });
+  test("all links incomplete: true", () => {
+    const links: ProfileLink[] = [
+      { label: "Profile", href: "/me", incomplete: true },
+      { label: "Availability", href: "/me/availability", incomplete: true },
+    ];
+    expect(anyLinkIncomplete(links)).toBe(true);
+  });
+  test("a mix of no field at all and one explicitly incomplete: true", () => {
+    const links: ProfileLink[] = [
+      { label: "Profile", href: "/me" },
+      { label: "Availability", href: "/me/availability", incomplete: true },
+    ];
+    expect(anyLinkIncomplete(links)).toBe(true);
   });
 });
