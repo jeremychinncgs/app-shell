@@ -6,7 +6,7 @@ import { signOutUrl, themeToggleLabel, type ProfileLink } from "./usermenu-logic
 export type { ProfileLink };
 
 /**
- * UserMenu — the Header's profile dropdown.
+ * UserMenu: the Header's profile dropdown.
  *
  * Contents, top to bottom:
  *  1. Signed-in email, non-interactive.
@@ -37,8 +37,8 @@ export function UserMenu({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // The server can't know the active theme (it's resolved pre-paint from
-  // cookie/OS by THEME_INIT_SCRIPT), so the toggle's label renders only after
-  // mount — same pattern as the standalone ThemeToggle.
+  // cookie/OS by THEME_INIT_SCRIPT), so the toggle's label renders only
+  // after mount, same pattern as the standalone ThemeToggle.
   useEffect(() => {
     setTheme(document.documentElement.dataset.theme === "light" ? "light" : "dark");
   }, []);
@@ -113,7 +113,7 @@ export function UserMenu({
           <div className="truncate border-b border-border px-3 py-2 text-xs text-text-3">{email}</div>
 
           {/* A future "Dashboard" entry belongs here, above profileLinks,
-              rendered the same way — no restructuring needed. */}
+              rendered the same way, no restructuring needed. */}
           {profileLinks.map((link) => (
             <a
               key={link.href}

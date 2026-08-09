@@ -22,7 +22,7 @@ export function Header({
   user: ShellUser;
   authHostUrl: string;
   subtitle?: string;
-  /** Passed straight through to UserMenu — see its doc comment for why the
+  /** Passed straight through to UserMenu. See its doc comment for why the
    *  shell never invents these itself. */
   profileLinks?: ProfileLink[];
   children?: ReactNode;
