@@ -58,12 +58,17 @@ export function themeToggleAriaLabel(theme: Theme | null): string {
 export function initialsFor(name: string | null | undefined, email: string): string {
   const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
   if (words.length > 0) {
-    const first = words[0]![0] ?? "";
-    const last = words.length > 1 ? (words[words.length - 1]![0] ?? "") : "";
+    // Spread to an array of code points rather than indexing with [0]:
+    // string indexing takes a single UTF-16 code unit, which would split a
+    // surrogate pair for any name outside the BMP. Every realistic CGSI name
+    // is in the BMP, so this is a theoretical edge today, but the spread
+    // costs nothing and this renders on every page of all 14 apps.
+    const first = [...words[0]!][0] ?? "";
+    const last = words.length > 1 ? ([...words[words.length - 1]!][0] ?? "") : "";
     return (first + last).toUpperCase();
   }
   const local = (email ?? "").split("@")[0]?.trim() ?? "";
-  return local.length > 0 ? local[0]!.toUpperCase() : "";
+  return local.length > 0 ? ([...local][0] ?? "").toUpperCase() : "";
 }
 
 /**

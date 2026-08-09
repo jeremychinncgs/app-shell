@@ -58,6 +58,15 @@ export function UserMenu({
   const initials = initialsFor(name, email);
   const showImage = !!image && !imageFailed;
 
+  // Google's avatar URLs rotate and expire on session/token refresh: a
+  // failed URL must not sour later, valid ones for the rest of this mount.
+  // Without this, a stale URL A that 404s once would leave the badge stuck
+  // on initials even after the session refreshes with a good URL B for the
+  // same person, since imageFailed itself never clears on its own.
+  useEffect(() => {
+    setImageFailed(false);
+  }, [image]);
+
   // The server can't know the active theme (it's resolved pre-paint from
   // cookie/OS by THEME_INIT_SCRIPT), so the toggle's label renders only
   // after mount, same pattern as the standalone ThemeToggle.

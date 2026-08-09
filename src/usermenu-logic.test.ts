@@ -69,6 +69,15 @@ describe("initialsFor", () => {
   test("empty name and empty email do not throw and return empty", () => {
     expect(initialsFor("", "")).toBe("");
   });
+  test("email with no local part does not throw and returns empty", () => {
+    expect(initialsFor(undefined, "@example.com")).toBe("");
+  });
+  test("whitespace-only name AND whitespace-only email do not throw", () => {
+    expect(initialsFor("   ", "   ")).toBe("");
+  });
+  test("three-or-more-word name uses first and last only (re-confirms above)", () => {
+    expect(initialsFor("Mary Jane Watson Parker", "mjwp@cgspectrum.com")).toBe("MP");
+  });
   test("lowercase name is upper-cased", () => {
     expect(initialsFor("jeremy chinn", "jeremychinn@cgspectrum.com")).toBe("JC");
   });
