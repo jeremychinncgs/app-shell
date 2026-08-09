@@ -55,7 +55,13 @@ export function Header({
               Admin
             </a>
           )}
-          <UserMenu email={user.email} authHostUrl={authHostUrl} profileLinks={profileLinks} />
+          <UserMenu
+            email={user.email}
+            name={user.name}
+            image={user.image}
+            authHostUrl={authHostUrl}
+            profileLinks={profileLinks}
+          />
         </div>
       </div>
     </header>

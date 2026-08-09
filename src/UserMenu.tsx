@@ -1,15 +1,30 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { applyTheme, type Theme } from "./theme";
-import { signOutUrl, themeToggleAriaLabel, themeToggleLabel, type ProfileLink } from "./usermenu-logic";
+import {
+  avatarAriaLabel,
+  initialsFor,
+  signOutUrl,
+  themeToggleAriaLabel,
+  themeToggleLabel,
+  type ProfileLink,
+} from "./usermenu-logic";
 
 export type { ProfileLink };
 
 /**
  * UserMenu: the Header's profile dropdown.
  *
- * Contents, top to bottom:
- *  1. Signed-in email, non-interactive.
+ * Trigger: the viewer's round profile photo (or an initials badge when no
+ * photo is available or it fails to load), plus the chevron. The visible
+ * email is gone from the trigger, the conventional pattern for this kind of
+ * menu, but the trigger keeps an accessible name via aria-label since that
+ * was the only thing making the button nameable to assistive tech.
+ *
+ * Dropdown contents, top to bottom:
+ *  1. Signed-in name (if known) and email, non-interactive. This is now the
+ *     only place identity is confirmable at a glance, which matters when
+ *     someone is signed in as the wrong account.
  *  2. `profileLinks`, in the order given (nothing rendered when absent/empty).
  *     A future "Dashboard" entry slots in above these without restructuring.
  *  3. Theme toggle, as a text item labelled with the ACTION it performs.
@@ -25,16 +40,23 @@ export type { ProfileLink };
  */
 export function UserMenu({
   email,
+  name,
+  image,
   authHostUrl,
   profileLinks = [],
 }: {
   email: string;
+  name?: string | null;
+  image?: string | null;
   authHostUrl: string;
   profileLinks?: ProfileLink[];
 }) {
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState<Theme | null>(null);
+  const [imageFailed, setImageFailed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const initials = initialsFor(name, email);
+  const showImage = !!image && !imageFailed;
 
   // The server can't know the active theme (it's resolved pre-paint from
   // cookie/OS by THEME_INIT_SCRIPT), so the toggle's label renders only
@@ -84,10 +106,38 @@ export function UserMenu({
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label={avatarAriaLabel(name, email)}
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 rounded border border-border px-2 py-1 text-xs text-text-2 hover:border-accent hover:text-accent transition-colors"
+        className="flex items-center gap-1.5 rounded border border-border px-1.5 py-1 text-xs text-text-2 hover:border-accent hover:text-accent transition-colors"
       >
-        <span className="max-w-[10rem] truncate">{email}</span>
+        {showImage ? (
+          // 🔴 Plain <img>, deliberately not next/image: the photo lives on
+          // lh3.googleusercontent.com, and next/image requires a
+          // remotePatterns entry in EVERY consuming app's next.config before
+          // it will render an external host. A plain <img> needs no config
+          // anywhere. Do not "upgrade" this to next/image; it would break
+          // the other 13 apps on this shell version until each one edited
+          // its own config. referrerPolicy="no-referrer" because Google's
+          // CDN can reject a request carrying a referrer from an
+          // unexpected origin, and this menu renders on 14 different
+          // hostnames.
+          <img
+            src={image!}
+            alt=""
+            width={28}
+            height={28}
+            referrerPolicy="no-referrer"
+            onError={() => setImageFailed(true)}
+            className="h-7 w-7 shrink-0 rounded-full object-cover"
+          />
+        ) : (
+          <span
+            aria-hidden
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/15 text-[11px] font-semibold text-accent"
+          >
+            {initials}
+          </span>
+        )}
         <svg
           width="10"
           height="10"
@@ -110,7 +160,12 @@ export function UserMenu({
           aria-label="User menu"
           className="absolute right-0 top-full z-50 mt-1 w-56 rounded border border-border bg-surface py-1 shadow-lg"
         >
-          <div className="truncate border-b border-border px-3 py-2 text-xs text-text-3">{email}</div>
+          <div className="truncate border-b border-border px-3 py-2 text-xs text-text-3">
+            {name && (
+              <div className="truncate text-sm font-medium text-text-2">{name}</div>
+            )}
+            {email}
+          </div>
 
           {/* A future "Dashboard" entry belongs here, above profileLinks,
               rendered the same way, no restructuring needed. */}

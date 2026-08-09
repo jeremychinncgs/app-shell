@@ -1,5 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { signOutUrl, themeToggleAriaLabel, themeToggleLabel } from "./usermenu-logic";
+import {
+  avatarAriaLabel,
+  initialsFor,
+  signOutUrl,
+  themeToggleAriaLabel,
+  themeToggleLabel,
+} from "./usermenu-logic";
 
 describe("signOutUrl", () => {
   test("builds the auth-host signout URL with an encoded callback", () => {
@@ -35,5 +41,56 @@ describe("themeToggleAriaLabel", () => {
   });
   test("unresolved (pre-mount) theme has no aria-label yet", () => {
     expect(themeToggleAriaLabel(null)).toBe("");
+  });
+});
+
+describe("initialsFor", () => {
+  test("two-word name gives first and last initial", () => {
+    expect(initialsFor("Jeremy Chinn", "jeremychinn@cgspectrum.com")).toBe("JC");
+  });
+  test("three-word name uses first and last, not middle", () => {
+    expect(initialsFor("Jeremy Allen Chinn", "jeremychinn@cgspectrum.com")).toBe("JC");
+  });
+  test("single-word name gives just that initial", () => {
+    expect(initialsFor("Jeremy", "jeremychinn@cgspectrum.com")).toBe("J");
+  });
+  test("no name falls back to the local part of the email", () => {
+    expect(initialsFor(undefined, "jeremychinn@cgspectrum.com")).toBe("J");
+  });
+  test("null name falls back to the local part of the email", () => {
+    expect(initialsFor(null, "jeremychinn@cgspectrum.com")).toBe("J");
+  });
+  test("blank name falls back to the email", () => {
+    expect(initialsFor("   ", "jeremychinn@cgspectrum.com")).toBe("J");
+  });
+  test("name with irregular whitespace is still parsed", () => {
+    expect(initialsFor("  Jeremy   Chinn  ", "jeremychinn@cgspectrum.com")).toBe("JC");
+  });
+  test("empty name and empty email do not throw and return empty", () => {
+    expect(initialsFor("", "")).toBe("");
+  });
+  test("lowercase name is upper-cased", () => {
+    expect(initialsFor("jeremy chinn", "jeremychinn@cgspectrum.com")).toBe("JC");
+  });
+});
+
+describe("avatarAriaLabel", () => {
+  test("uses the name when available", () => {
+    expect(avatarAriaLabel("Jeremy Chinn", "jeremychinn@cgspectrum.com")).toBe(
+      "User menu for Jeremy Chinn",
+    );
+  });
+  test("falls back to the email when name is absent", () => {
+    expect(avatarAriaLabel(undefined, "jeremychinn@cgspectrum.com")).toBe(
+      "User menu for jeremychinn@cgspectrum.com",
+    );
+  });
+  test("falls back to the email when name is blank", () => {
+    expect(avatarAriaLabel("   ", "jeremychinn@cgspectrum.com")).toBe(
+      "User menu for jeremychinn@cgspectrum.com",
+    );
+  });
+  test("falls back to a generic label when neither is available", () => {
+    expect(avatarAriaLabel(null, "")).toBe("User menu");
   });
 });

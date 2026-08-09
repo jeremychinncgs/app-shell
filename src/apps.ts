@@ -9,6 +9,11 @@ export type AppEntry = {
 export type ShellUser = {
   email: string;
   apps: string[];
+  // Both optional: 13 of the 14 consuming apps pass only { email, apps } until
+  // they bump past this version, and none of them may break. Absent name/image
+  // falls back to the initials badge (see usermenu-logic.ts initialsFor).
+  name?: string | null;
+  image?: string | null;
 };
 
 // Canonical CGSI app catalog. `key` matches the grant keys the auth host embeds

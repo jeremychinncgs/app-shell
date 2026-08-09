@@ -47,3 +47,35 @@ export function themeToggleAriaLabel(theme: Theme | null): string {
   if (theme === "light") return "Switch to dark mode";
   return "";
 }
+
+/**
+ * Initials for the trigger's fallback badge, shown when there is no profile
+ * image (or it fails to load). Prefers `name` ("Jeremy Chinn" -> "JC", a
+ * single word "Jeremy" -> "J"); falls back to the local part of `email`
+ * ("jeremychinn@cgspectrum.com" -> "J") when name is absent or blank.
+ * Never throws on empty strings or odd whitespace: worst case is "".
+ */
+export function initialsFor(name: string | null | undefined, email: string): string {
+  const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (words.length > 0) {
+    const first = words[0]![0] ?? "";
+    const last = words.length > 1 ? (words[words.length - 1]![0] ?? "") : "";
+    return (first + last).toUpperCase();
+  }
+  const local = (email ?? "").split("@")[0]?.trim() ?? "";
+  return local.length > 0 ? local[0]!.toUpperCase() : "";
+}
+
+/**
+ * Accessible name for the avatar trigger button, replacing the email text
+ * that used to be visible on the button itself. Names the person when
+ * possible; falls back to the email so the button always has an accessible
+ * name, and finally to a generic label if somehow neither is available.
+ */
+export function avatarAriaLabel(name: string | null | undefined, email: string): string {
+  const trimmedName = (name ?? "").trim();
+  if (trimmedName.length > 0) return `User menu for ${trimmedName}`;
+  const trimmedEmail = (email ?? "").trim();
+  if (trimmedEmail.length > 0) return `User menu for ${trimmedEmail}`;
+  return "User menu";
+}
