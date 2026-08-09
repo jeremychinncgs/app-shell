@@ -128,12 +128,19 @@ export function UserMenu({
             height={28}
             referrerPolicy="no-referrer"
             onError={() => setImageFailed(true)}
-            className="h-7 w-7 shrink-0 rounded-full object-cover"
+            // Arbitrary-pixel size classes, not h-7/w-7: this component
+            // renders inside whichever app's DOM hosts the shell, and
+            // Tailwind's rem-based scale resolves against THAT app's root
+            // font-size, not a fixed 16px. people sets a 14px root font, so
+            // h-7 (1.75rem) would render at 24.5px there, not the intended
+            // 28px. Arbitrary-value classes compile to literal pixels and
+            // stay correct regardless of the host's root size.
+            className="h-[28px] w-[28px] shrink-0 rounded-full object-cover"
           />
         ) : (
           <span
             aria-hidden
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/15 text-[11px] font-semibold text-accent"
+            className="flex h-[28px] w-[28px] shrink-0 items-center justify-center rounded-full bg-accent/15 text-[11px] font-semibold text-accent"
           >
             {initials}
           </span>
