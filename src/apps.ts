@@ -33,6 +33,7 @@ export const APPS: AppEntry[] = [
   { key: "cms", name: "Media", url: "https://cms.cgspectrum.com", description: "Media library (in development)" },
   { key: "audit", name: "Audits", url: "https://audit.cgspectrum.com", description: "Cypher audit remediation" },
   { key: "governance", name: "Governance", url: "https://governance.cgspectrum.com", description: "TEQSA self-assurance registers & compliance" },
+  { key: "launchpad", name: "Launchpad", url: "https://launchpad.cgspectrum.com", description: "Launchpad subscription & mentor admin (read-only)" },
   { key: "admin", name: "Admin", url: "https://auth.cgspectrum.com/admin", description: "Manage app access" },
 ];
 
