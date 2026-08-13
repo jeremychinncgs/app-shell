@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { visibleApps, type AppEntry } from "./apps";
 import { pickAppsToWarm } from "./warm";
 
@@ -14,10 +14,43 @@ export function AppLauncher({
 }) {
   const [open, setOpen] = useState(false);
   const lastWarm = useRef<Record<string, number>>({});
+  const containerRef = useRef<HTMLDivElement>(null);
   const apps = useMemo(
     () => visibleApps(catalog, userApps, currentApp),
     [catalog, userApps, currentApp],
   );
+
+  // Close on outside click or Escape while open — same document-listener
+  // pattern as UserMenu, deliberately NOT the fixed-inset-0 backdrop this
+  // component used to carry.
+  //
+  // 🔴 A `fixed inset-0` overlay cannot work inside this Header. The header
+  // sets `backdrop-blur`, and an element with a backdrop-filter becomes the
+  // containing block for its fixed-position descendants, so the overlay's
+  // inset-0 resolved to the 58px header strip instead of the viewport. Every
+  // click in the page BELOW the header missed it and the launcher stayed open.
+  // Do not reintroduce a backdrop here; it would silently break again.
+  //
+  // Escape also has to be a document listener: the trigger button keeps focus
+  // when the menu opens, so a keydown handler on the menu element itself never
+  // fires until someone tabs into it.
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(e: PointerEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
 
   // Opening the launcher = intent to switch: pre-fetch the other apps so the
   // click lands on a warm instance (same-site credentialed fetch warms the
@@ -29,7 +62,7 @@ export function AppLauncher({
   };
 
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       <button
         type="button"
         aria-label="Switch app"
@@ -49,29 +82,31 @@ export function AppLauncher({
         </span>
       </button>
       {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />
-          <div className="absolute left-0 z-50 mt-2 w-72 rounded-lg border border-border bg-surface-2 p-2 shadow-xl" role="menu" onKeyDown={(e) => { if (e.key === "Escape") setOpen(false); }}>
-            {apps.map((a) => {
-              const isCurrent = a.key === currentApp;
-              return (
-                <a
-                  key={a.key}
-                  href={a.url}
-                  role="menuitem"
-                  className={`block rounded px-3 py-2 transition-colors ${
-                    isCurrent
-                      ? "bg-accent-soft text-text"
-                      : "text-text-2 hover:bg-surface hover:text-text"
-                  }`}
-                >
-                  <span className="block text-sm font-bold">{a.name}</span>
-                  <span className="block text-xs text-text-3">{a.description}</span>
-                </a>
-              );
-            })}
-          </div>
-        </>
+        <div
+          className="absolute left-0 z-50 mt-2 w-72 rounded-lg border border-border bg-surface-2 p-2 shadow-xl"
+          role="menu"
+          aria-label="Switch app"
+        >
+          {apps.map((a) => {
+            const isCurrent = a.key === currentApp;
+            return (
+              <a
+                key={a.key}
+                href={a.url}
+                role="menuitem"
+                onClick={() => setOpen(false)}
+                className={`block rounded px-3 py-2 transition-colors ${
+                  isCurrent
+                    ? "bg-accent-soft text-text"
+                    : "text-text-2 hover:bg-surface hover:text-text"
+                }`}
+              >
+                <span className="block text-sm font-bold">{a.name}</span>
+                <span className="block text-xs text-text-3">{a.description}</span>
+              </a>
+            );
+          })}
+        </div>
       )}
     </div>
   );
