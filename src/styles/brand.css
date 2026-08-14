@@ -18,7 +18,14 @@
    else OS preference) and toggled from the shared Header.
    ──────────────────────────────────────────────────────────────────────────── */
 
-@theme {
+/* `static` because Tailwind otherwise drops any theme variable it cannot see
+   referenced, and this file is consumed by fifteen apps that each use a
+   different subset. Without it, `--color-surface-3` is emitted in the light
+   block (plain CSS, never shaken) but dropped from the dark default in any app
+   whose usage Tailwind fails to detect — a dark-only token by accident, which
+   is the exact bug this rewrite exists to remove. The cost is ~2KB of unused
+   custom properties per app. */
+@theme static {
   /* ── Surfaces ──────────────────────────────────────────────────────────── */
   --color-bg: #030B1B;
   --color-surface: #0E1729;
