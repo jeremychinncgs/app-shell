@@ -1,0 +1,153 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   CGSI BRAND LAYER — the only file a rebrand edits.
+
+   Everything visual in the Brain estate resolves through the tokens below.
+   Change a value here, bump the app-shell tag, bump the 15 app pins, and the
+   whole estate moves together. No app should redeclare any of these; if an app
+   needs a colour that is not here, it belongs here.
+
+   Structure:
+     @theme                      dark values (the default) + non-colour tokens
+     html[data-theme="light"]    light overrides for EVERY colour token above
+
+   ⚠️ Every colour declared in @theme must also appear in the light block.
+   A token that exists in only one of the two renders a dark panel on a white
+   page (the pre-1.27 --color-surface-3 bug, live in 7 apps).
+
+   data-theme is set pre-paint by THEME_INIT_SCRIPT (cgsi-theme estate cookie,
+   else OS preference) and toggled from the shared Header.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@theme {
+  /* ── Surfaces ──────────────────────────────────────────────────────────── */
+  --color-bg: #030B1B;
+  --color-surface: #0E1729;
+  --color-surface-2: #18223A;
+  --color-surface-3: #232A39;
+  --color-border: #2D3B4A;
+  --color-border-strong: #3F5266;
+
+  /* ── Text ──────────────────────────────────────────────────────────────── */
+  --color-text: #F5F8FA;
+  --color-text-2: #C5CDD6;
+  --color-text-3: #8A95A2;
+
+  /* ── Accent (brand) ────────────────────────────────────────────────────── */
+  --color-accent: #EA27C2;
+  --color-accent-soft: rgba(234, 39, 194, 0.16);
+  --color-accent-border: rgba(234, 39, 194, 0.45);
+
+  /* ── Status ────────────────────────────────────────────────────────────── */
+  --color-good: #4ADE80;
+  --color-good-soft: rgba(74, 222, 128, 0.14);
+  --color-warn: #FBBF24;
+  --color-warn-soft: rgba(251, 191, 36, 0.14);
+  --color-bad: #F87171;
+  --color-bad-soft: rgba(248, 113, 113, 0.14);
+
+  /* Workbench aliases for the same three status colours. Kept because the
+     ported Bar / KpiCard / StatusPill components address them by these names;
+     they are aliases, not a second palette, so they track the values above. */
+  --color-success: var(--color-good);
+  --color-success-soft: var(--color-good-soft);
+  --color-surface-success-soft: rgba(74, 222, 128, 0.12);
+  --color-warning: var(--color-warn);
+  --color-warning-soft: var(--color-warn-soft);
+  --color-surface-warning-soft: rgba(251, 191, 36, 0.12);
+  --color-error: var(--color-bad);
+  --color-error-soft: var(--color-bad-soft);
+  --color-surface-error-soft: rgba(248, 113, 113, 0.12);
+
+  /* ── Attention ─────────────────────────────────────────────────────────── */
+  /* Outstanding required work: rail badges, "Required" tags, the UserMenu
+     incomplete dot. Same hex as --color-gamedesign, which is a DISCIPLINE
+     colour and must not be borrowed for a UI state; this token owns the
+     meaning. Used by UserMenu in every app, so it ships here — before 1.27 it
+     was defined only in `people` and rendered as nothing everywhere else. */
+  --color-attention: #FFAA4D;
+  --color-attention-soft: rgba(255, 170, 77, 0.07);
+  --color-attention-hover: rgba(255, 170, 77, 0.13);
+  --color-attention-border: rgba(255, 170, 77, 0.2);
+
+  /* ── Disciplines ───────────────────────────────────────────────────────── */
+  /* Department identity, not status. Never reuse these for a UI state. */
+  --color-animation: #FF7276;
+  --color-gamedesign: #FFAA4D;
+  --color-digitalart: #009ACE;
+  --color-animation-soft: rgba(255, 114, 118, 0.12);
+  --color-animation-border: rgba(255, 114, 118, 0.4);
+  --color-gamedesign-soft: rgba(255, 170, 77, 0.12);
+  --color-gamedesign-border: rgba(255, 170, 77, 0.4);
+  --color-digitalart-soft: rgba(0, 154, 206, 0.12);
+  --color-digitalart-border: rgba(0, 154, 206, 0.4);
+  /* Shorthand aliases used by the ported workbench components. */
+  --color-disc-anim: var(--color-animation);
+  --color-disc-game: var(--color-gamedesign);
+  --color-disc-art: var(--color-digitalart);
+
+  /* ── Event categories ──────────────────────────────────────────────────── */
+  /* Picked to distinguish from discipline colours and status colours, so a dot
+     or chip colour can never be misread as a discipline or a status signal. */
+  --color-cat-industry: #60A5FA;     /* sky blue — Industry Conferences */
+  --color-cat-industry-soft: rgba(96, 165, 250, 0.14);
+  --color-cat-industry-border: rgba(96, 165, 250, 0.4);
+  --color-cat-community: #A78BFA;    /* violet   — Community            */
+  --color-cat-community-soft: rgba(167, 139, 250, 0.14);
+  --color-cat-community-border: rgba(167, 139, 250, 0.4);
+  --color-cat-marketing: #A3E635;    /* lime     — Marketing            */
+  --color-cat-marketing-soft: rgba(163, 230, 53, 0.14);
+  --color-cat-marketing-border: rgba(163, 230, 53, 0.4);
+  --color-cat-lci: #FB7185;          /* rose     — LCI on-prem          */
+  --color-cat-lci-soft: rgba(251, 113, 133, 0.14);
+  --color-cat-lci-border: rgba(251, 113, 133, 0.4);
+
+  /* ── Layout ────────────────────────────────────────────────────────────── */
+  /* Theme-independent, so no light override. */
+  --content-max: 1480px;
+}
+
+/* Font stacks. --font-display / --font-body are the next/font variables set on
+   <html> by the consuming layout (see @cgsi/app-shell/fonts). The quoted names
+   are the fallback for any surface that renders before the webfont resolves. */
+:root {
+  --brand-body: var(--font-body), "Quicksand", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  --brand-display: var(--font-display), "Stack Sans Notch", var(--brand-body);
+}
+
+/* ── Light mode ────────────────────────────────────────────────────────────
+   Token overrides only. Neutrals are a cool grey ramp rather than an inversion
+   of the navy ramp, so the light values are stated outright, not derived.
+   Accent and status hues darken for contrast on white.
+
+   Deliberately NOT overridden, and theme-invariant by design:
+   - discipline and event-category hues — they are identity, and a department
+     that changes colour with the theme stops being recognisable;
+   - the soft/border tints — a 12-16% tint of the dark hue reads correctly on
+     white, so restating them buys nothing.
+   ⚠️ Known follow-up, not fixed in 1.27 because it changes pixels rather than
+   centralising them: discipline hues used as TEXT on a light tint (the .chip
+   discipline variants) fail AA on white. Fixing that is a design decision, so
+   it ships on its own, not inside a refactor. */
+html[data-theme="light"] {
+  --color-bg: #F2F5F9;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F6F8FB;
+  /* Before 1.27 this override existed only in `referrals`, so the other seven
+     apps that use --color-surface-3 painted a navy panel on a white page. */
+  --color-surface-3: #EEF2F7;
+  --color-border: #D8DFE8;
+  --color-border-strong: #B9C4D0;
+
+  --color-text: #10213A;
+  --color-text-2: #41506A;
+  --color-text-3: #66758B;
+
+  --color-accent: #C313A0;
+  --color-accent-soft: rgba(234, 39, 194, 0.12);
+  --color-accent-border: rgba(195, 19, 160, 0.35);
+
+  --color-good: #15803D;
+  --color-warn: #B45309;
+  --color-warn-soft: rgba(180, 83, 9, 0.14);
+  --color-bad: #DC2626;
+}

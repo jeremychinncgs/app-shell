@@ -1,0 +1,100 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   CGSI BASE LAYER — reset, document typography, and form-control chrome.
+
+   Structure, not brand: everything here resolves through the tokens in
+   brand.css, so a rebrand never edits this file. Element selectors only, so a
+   Tailwind utility on the element always wins.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+* {
+  box-sizing: border-box;
+}
+
+/* Reserve the scrollbar gutter always, so navigating from a short page to a
+   long one does not shift the layout sideways. */
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--brand-body);
+  /* 14px root: these are dense internal tools, not marketing pages. */
+  font-size: 14px;
+  line-height: 1.5;
+  color-scheme: dark;
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body {
+  color-scheme: light;
+}
+
+/* ── Type scale ────────────────────────────────────────────────────────────
+   One scale estate-wide. h3 is a section eyebrow rather than a third heading
+   size, which is why it is smaller than body-adjacent h2 and set in caps. */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--brand-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+h1 {
+  font-size: 22px;
+}
+h2 {
+  font-size: 17px;
+}
+h3 {
+  font-size: 13px;
+  color: var(--color-text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92em;
+}
+
+/* ── Form controls ─────────────────────────────────────────────────────────
+   Scoped to main so the app-shell chrome (header, launcher, search) never
+   inherits these if it gains form elements of its own. */
+main select,
+main input[type="search"],
+main input[type="text"],
+main input[type="email"],
+main input[type="password"] {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 13px;
+  color: var(--color-text);
+  min-width: 140px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+main select:hover,
+main input:hover {
+  border-color: var(--color-border-strong);
+}
+main select:focus,
+main input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}

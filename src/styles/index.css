@@ -1,0 +1,25 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   @cgsi/app-shell — the CGSI design system.
+
+   Consuming app's globals.css:
+
+       @import "tailwindcss";
+       @source "../../node_modules/@cgsi/app-shell/src";
+       @import "@cgsi/app-shell/styles.css";
+
+       ...then app-specific CSS only: anything an app needs that no other app
+       needs. If a second app grows the same pattern, it moves in here.
+
+   Order matters. Tailwind first so its layers exist; this file second so the
+   @theme tokens register; app CSS last so an app can still override a shared
+   component at equal specificity.
+
+   Layers, in the order they load:
+     brand.css       colour, type stacks, layout tokens — the rebrand surface
+     base.css        reset, type scale, form-control chrome
+     components.css  patterns duplicated across four or more apps
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@import "./brand.css";
+@import "./base.css";
+@import "./components.css";

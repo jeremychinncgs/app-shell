@@ -1,10 +1,13 @@
 {
   "name": "@cgsi/app-shell",
-  "version": "1.26.0",
+  "version": "1.27.0",
   "private": false,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./fonts": "./src/fonts.ts",
+    "./styles.css": "./src/styles/index.css",
+    "./styles/*": "./src/styles/*"
   },
   "files": ["src"],
   "scripts": {
