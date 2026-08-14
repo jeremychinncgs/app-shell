@@ -47,16 +47,20 @@
   /* ── Status ────────────────────────────────────────────────────────────── */
   --color-good: #4ADE80;
   --color-good-soft: rgba(74, 222, 128, 0.14);
+  --color-good-border: rgba(74, 222, 128, 0.4);
   --color-warn: #FBBF24;
   --color-warn-soft: rgba(251, 191, 36, 0.14);
+  --color-warn-border: rgba(251, 191, 36, 0.4);
   --color-bad: #F87171;
   --color-bad-soft: rgba(248, 113, 113, 0.14);
+  --color-bad-border: rgba(248, 113, 113, 0.4);
 
   /* Workbench aliases for the same three status colours. Kept because the
      ported Bar / KpiCard / StatusPill components address them by these names;
      they are aliases, not a second palette, so they track the values above. */
   --color-success: var(--color-good);
   --color-success-soft: var(--color-good-soft);
+  --color-success-border: var(--color-good-border);
   --color-surface-success-soft: rgba(74, 222, 128, 0.12);
   --color-warning: var(--color-warn);
   --color-warning-soft: var(--color-warn-soft);
@@ -64,6 +68,7 @@
   --color-error: var(--color-bad);
   --color-error-soft: var(--color-bad-soft);
   --color-surface-error-soft: rgba(248, 113, 113, 0.12);
+  --color-danger: var(--color-bad);
 
   /* ── Attention ─────────────────────────────────────────────────────────── */
   /* Outstanding required work: rail badges, "Required" tags, the UserMenu
@@ -107,6 +112,21 @@
   --color-cat-lci: #FB7185;          /* rose     — LCI on-prem          */
   --color-cat-lci-soft: rgba(251, 113, 133, 0.14);
   --color-cat-lci-border: rgba(251, 113, 133, 0.4);
+
+  /* ── Card and table surfaces ───────────────────────────────────────────── */
+  /* Aliases, not new colours — they track the surfaces above through var(), so
+     they follow light mode without appearing in the light block.
+     Added in 1.28.0: the login page in finance, leadership, marketing, people
+     and partnerships styles its card with --color-card / --color-card-border /
+     --color-text-dim, and finance's DataTable uses --color-bg-2 /
+     --color-text-1. None of those names had ever been defined anywhere, so the
+     properties resolved to the guaranteed-invalid value and those login cards
+     rendered with no fill and a currentColor border. */
+  --color-card: var(--color-surface);
+  --color-card-border: var(--color-border);
+  --color-text-dim: var(--color-text-3);
+  --color-bg-2: var(--color-surface-2);
+  --color-text-1: var(--color-text);
 
   /* ── Layout ────────────────────────────────────────────────────────────── */
   /* Theme-independent, so no light override. */

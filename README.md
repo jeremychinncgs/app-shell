@@ -48,6 +48,11 @@ Rules that keep it a system rather than fifteen near-copies:
   `--color-attention` share a hex; they do not share a meaning. Use the one
   that matches what you are communicating, so a later palette change can move
   them apart.
+- **A token an app references must exist here.** Five apps styled their login
+  card with `--color-card` / `--color-card-border` / `--color-text-dim`, names
+  nothing had ever defined, so the cards rendered with no fill and a
+  currentColor border until 1.28.0. Grep the estate for `var(--color-` after
+  any rename.
 - **App CSS loads after this package**, so an app can still override a shared
   component at equal specificity. Do that as a stopgap, not a habit — a second
   app wanting the same override means the shared rule is wrong.

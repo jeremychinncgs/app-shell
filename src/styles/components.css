@@ -38,12 +38,12 @@
 }
 .chip.status-active {
   background: var(--color-good-soft);
-  border-color: rgba(74, 222, 128, .4);
+  border-color: var(--color-good-border);
   color: var(--color-good);
 }
 .chip.status-inactive {
   background: var(--color-warn-soft);
-  border-color: rgba(251, 191, 36, .4);
+  border-color: var(--color-warn-border);
   color: var(--color-warn);
 }
 .chip.cat-industry {
